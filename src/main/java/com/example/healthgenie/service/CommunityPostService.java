@@ -1,26 +1,82 @@
 package com.example.healthgenie.service;
 
 
+import com.example.healthgenie.domain.community.dto.PostRequest;
+import com.example.healthgenie.domain.community.dto.PostResponse;
 import com.example.healthgenie.domain.community.entity.CommunityPost;
-import com.example.healthgenie.domain.user.entity.User;
-import com.example.healthgenie.exception.CommunityPostErrorResult;
 import com.example.healthgenie.exception.CommunityPostException;
 import com.example.healthgenie.repository.CommunityPostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.example.healthgenie.exception.CommunityPostErrorResult.POST_EMPTY;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CommunityPostService {
 
     public static final int POST_COUNT = 20;
     private final CommunityPostRepository postRepository;
+
+    public List<PostResponse> findAll() {
+        return postRepository.findAll().stream()
+                .map(p -> new PostResponse(p.getId(), p.getTitle(), p.getContent()))
+                .collect(Collectors.toList());
+    }
+
+    public PostResponse findById(Long id) {
+        CommunityPost post = postRepository.findById(id)
+                .orElseThrow(() -> new CommunityPostException(POST_EMPTY));
+
+        return PostResponse.builder()
+                .title(post.getTitle())
+                .content(post.getContent())
+                .build();
+    }
+
+    @Transactional
+    public PostResponse save(PostRequest dto) {
+        CommunityPost savedPost = postRepository.save(CommunityPost.builder()
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .build());
+
+        return PostResponse.builder()
+                .id(savedPost.getId())
+                .build();
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Optional<CommunityPost> opPost = postRepository.findById(id);
+        if(opPost.isEmpty()) {
+            throw new CommunityPostException(POST_EMPTY);
+        }
+
+        postRepository.delete(opPost.get());
+    }
+
+    @Transactional
+    public Long update(Long id, PostRequest request) {
+        CommunityPost post = postRepository.findById(id)
+                .orElseThrow(() -> new CommunityPostException(POST_EMPTY));
+
+        if(request.getTitle() != null) {
+            post.updateTitle(request.getTitle());
+        }
+
+        if(request.getContent() != null) {
+            post.updateContent(request.getContent());
+        }
+
+        return id;
+    }
 
     //게시물작성
     /*

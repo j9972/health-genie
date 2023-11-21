@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-    private final CustomerUsersDetailsService customerUsersService;
+    private final CustomUserDetailService customerUsersService;
 
 
     // access Data

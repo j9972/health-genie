@@ -1,31 +1,26 @@
 package com.example.healthgenie.domain.user.entity;
 
-import com.example.healthgenie.domain.user.entity.User;
 import com.example.healthgenie.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@NoArgsConstructor
+@Builder
 @Entity
-@Setter
 @Getter
-@Table(name = "REFRESHTOKEN_TB")
+@Table(name = "REFRESH_TOKEN_TB")
+@NoArgsConstructor
+@AllArgsConstructor
 public class RefreshToken extends BaseEntity {
 
-
     @Id
-    @Column(name = "refresh_token_id")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "refresh_token_id", nullable = false)
+    private Long refreshTokenId;
 
-    @Column(name = "token")
-    private String token;
+    @Column(name = "refresh_token", nullable = false)
+    private String refreshToken;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User member;
-
-    public void changeToken(String token) {
-        this.token = token;
-    }
+    @Column(name = "key_email", nullable = false)
+    private String keyEmail;
 
 }

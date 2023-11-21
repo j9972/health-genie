@@ -1,6 +1,4 @@
-package com.example.healthgenie.global.config.auth;
-
-// import com.example.fakeshopapi.security.jwt.util.IfLoginArgumentResolver;
+package com.example.healthgenie.global.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -18,15 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:1234")
+//                .allowCredentials(true)
                 .allowedMethods("GET", "POST", "PATCH", "PUT", "OPTIONS", "DELETE");
-//                .allowCredentials(true);
     }
-
-    // IfLoginArgumentResolver 로그인된 유저를 한해서 post 작성 등 가능하게 하려함
-    /*
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new IfLoginArgumentResolver());
-    }
-     */
 }

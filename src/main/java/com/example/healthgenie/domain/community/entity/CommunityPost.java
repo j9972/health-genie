@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +19,7 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @Table(name = "COMMUNITY_POST_TB")
+@Builder(toBuilder = true)
 public class CommunityPost extends BaseEntity {
 
     @Id
@@ -39,13 +39,23 @@ public class CommunityPost extends BaseEntity {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "post",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<CommunityComment> commentList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<CommunityPostPhoto> communityPostPhotos = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id")
     private User member;
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
